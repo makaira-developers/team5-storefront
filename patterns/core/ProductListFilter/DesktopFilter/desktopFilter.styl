@@ -1,0 +1,110 @@
+$breakpoint-large = 1000px
+$breakpoint-huge = 1250px
+
+.desktop-filter
+  display none
+
+  @media (min-width $breakpoint-large)
+    display block
+    flex 0 0 24rem
+    padding-right 2rem
+
+  @media (min-width $breakpoint-huge)
+    flex-basis 30rem
+
+.desktop-filter__section
+
+  & + &
+    margin-top 2.5rem
+
+  &:last-of-type
+    margin-bottom 3rem
+
+.desktop-filter__multi-select-item--default
+  font-size 1.4rem
+  line-height 1.8rem
+
+  &--active
+    font-weight var(--font-weight-medium)
+
+  & + &
+    margin-top 1.2rem
+
+  label
+    display flex
+    align-items center
+
+    &:hover
+      cursor pointer
+
+  .icon
+    flex-shrink 0
+    height 1.8rem
+    width 1.8rem
+    margin-right 0.6rem
+    color var(--neutral-70)
+
+  input
+    display none
+
+.desktop-filter__multi-select__wrapper
+  overflow hidden
+  transition max-height 0.2s
+
+  &--overflow
+    border-bottom 1px solid var(--neutral-20)
+    box-shadow inset 0 -8px 5px -8px rgba(0, 0, 0, 0.2)
+    max-height 20.3rem
+
+.desktop-filter__multi-select-button
+  display none
+  &--visible
+    display block
+  
+.desktop-filter__multi-select--grid
+  display grid
+  grid-template-columns repeat(3, 1fr)
+  grid-gap 1rem
+  grid-auto-flow dense
+
+.desktop-filter__multi-select-item--grid
+  background var(--neutral-00)
+  border 1px solid var(--neutral-20)
+  border-radius 5px
+
+  &--active
+    border-color var(--neutral-90)
+    background var(--primary)
+    color var(--neutral-10)
+
+  &-2-col
+    grid-column span 2
+
+  &-3-col
+    grid-column span 3
+
+  label
+    display flex
+    justify-content center
+    align-items center
+    text-align center
+    min-height 3rem
+    font-size 1.4rem
+    font-weight var(--font-weight-medium)
+    line-height 1.8rem
+    letter-spacing 0.02rem
+
+    &:hover
+      cursor pointer
+
+  input
+    display none
+
+.desktop-filter__range-filter
+  background var(--neutral-00)
+  padding 0 1.4rem 0 1rem
+
+.desktop-filter__range-filter-label
+  display block
+  text-align center
+  margin-bottom 1rem

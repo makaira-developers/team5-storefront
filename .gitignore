@@ -1,0 +1,33 @@
+# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+
+# dependencies
+node_modules
+.pnp
+.pnp.js
+
+# testing
+coverage
+
+# production
+.env
+build
+.next
+
+# dynamically generated files
+public/assets/svgs/icons.svg
+public/assets/styles/main.css
+patterns/core/BaseLayout/fonts.styl
+patterns/core/BaseLayout/typography.styl
+
+# misc
+.idea
+.DS_Store
+.tern-port
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
