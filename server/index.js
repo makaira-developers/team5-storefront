@@ -56,7 +56,7 @@ app
 
     server.post('/makaira-copy', async (req, res) => {
       const postData = req.body
-      console.log(postData)
+      //console.log(postData)
       /*
       postData = {
         "customer": "5",
@@ -72,7 +72,8 @@ app
         const e = await copyPageData(pageId, sourceInstance)
         return res.status(200).json(e)
       } catch (e) {
-        return res.status(400).json(e)
+        console.log(e)
+        return res.status(400).json({ error: e.message })
       }
     })
 

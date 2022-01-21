@@ -1,95 +1,14 @@
-const user = 'admin'
-const pass = 'bxzstbxirejqysjs'
-const auth = {
-  auth: {
-    username: user,
-    password: pass,
-  },
-  timeout: 5000,
-}
-
-const axios = require('axios')
-
-async function getInstanceConfig(instance) {
-  return {
-    ...auth,
-    headers: {
-      'X-Makaira-Instance': instance,
-    },
-  }
-}
-
-async function getPageData(pageid, config) {
-  const url = 'https://team5.makaira.io/landingpage/' + pageid
-  let ret = null
-  try {
-    const response = await axios.get(url, config)
-    ret = response.data
-  } catch (e) {
-    ret = null
-  }
-  return ret
-}
-
-async function createPage(pageData, config) {
-  const url = 'https://team5.makaira.io/landingpage'
-  let ret = null
-  try {
-    const response = await axios.post(url, pageData, config)
-    ret = response.data
-    //console.log(ret)
-  } catch (e) {
-    //console.log(e)
-    ret = null
-  }
-  return ret
-}
-
-async function updatePage(pageData, config) {
-  const url = 'https://team5.makaira.io/landingpage/' + pageData.id
-  let ret = null
-  try {
-    const response = await axios.put(url, pageData, config)
-    ret = response.data
-  } catch (e) {
-    ret = null
-  }
-  return ret
-}
+const makaira_api = require('./makaira-api')
 
 async function getTargetInstance(pageData) {
   console.log(pageData)
 }
 
-async function addNotification(
-  config,
-  message = 'error happened',
-  title = 'error title',
-  level = 'error'
-) {
-  const url = 'https://team5.makaira.io/notifications'
-  let ret = null
-  try {
-    const postBody = {
-      message: message,
-      title: title,
-      level: level,
-      //"show_immidiately" : true
-    }
-    const response = await axios.post(url, postBody, config)
-    ret = response.data
-  } catch (e) {
-    ret = e.message
-  }
-  //console.log(ret)
-  return ret
-}
-
-module.exports = async function copyPageData(pageId, sourceInstance) {
+module.exports = async function copyPageData(pageId, sourceInstanceName) {
   let ret = {}
   try {
     // Get original Page:
-    const pageData = await getPageData(pageId, getInstanceConfig(sourceInstance))
+    const pageData = await makaira_api.getPageData(pageId, sourceInstanceName)
     if (pageData == null) {
       throw new Error('Original Page does not exist')
     }
@@ -97,16 +16,16 @@ module.exports = async function copyPageData(pageId, sourceInstance) {
     const targetInstance = await getTargetInstance(pageData)
 
     // getPage on Target instance
-    const targetPage = await getPageData(pageId, targetInstance)
+    const targetPage = await makaira_api.getPageData(pageId, targetInstance)
     //console.log('Targetpage' + targetPage)
     if (targetPage == null) {
       // Page does not exist:
-      createPage(pageData, targetInstance)
+      makaira_api.createPage(pageData, targetInstance)
     } else {
-      updatePage(pageData, targetInstance)
+      makaira_api.updatePage(pageData, targetInstance)
     }
-    addNotification(
-      sourceInstance,
+    makaira_api.addNotification(
+      sourceInstanceName,
       'Page wurde erfolgreich übertragen',
       'Erfolg',
       'info'
@@ -115,15 +34,13 @@ module.exports = async function copyPageData(pageId, sourceInstance) {
       status: 'ok',
     }
   } catch (e) {
-    addNotification(
-      sourceInstance,
+    makaira_api.addNotification(
+      sourceInstanceName,
       'Page konnte nicht erfolgreich übertragen werden',
       'Misserfolg',
       'error'
     )
-    ret = {
-      status: 'error',
-    }
+    throw e
   }
 
   //console.log(data)
