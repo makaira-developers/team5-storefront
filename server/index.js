@@ -62,11 +62,11 @@ app
         "customer": "5",
         "instance": "hackathon",
         "type": "landingpage",
-        "id": ["3"],
+        "ids": ["3"],
         "action": "update"
       }
       */
-      let pageId = postData['id'][0]
+      let pageId = postData['ids'][0]
       const e = await copyPageData(pageId)
       return res.status(200).json(e)
     })
