@@ -21,10 +21,12 @@ module.exports = async function copyPageData(pageId, sourceInstanceName) {
     // Get original Page:
     const pageData = await makaira_api.getPageData(pageId, sourceInstanceName)
     if (pageData == null) {
-      throw new Error('Original Page does not exist')
+      throw new Error('Original Page does not exist.')
     }
 
     const { active, targetInstance } = await getComponentConfig(pageData)
+
+    if (!active || !targetInstance) { throw  new Error('Either it is not active or target instance is not found.')}
 
     // getPage on Target instance
     const targetPage = await makaira_api.getPageData(pageId, targetInstance)
