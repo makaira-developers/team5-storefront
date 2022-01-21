@@ -1,7 +1,18 @@
 const makaira_api = require('./makaira-api')
 
-async function getTargetInstance(pageData) {
-  console.log(pageData)
+async function getComponentConfig(pageData) {
+  const page = pageData.config.main.elements.filter((element) => {
+    if (element.component == 'copy-settings') {
+      return element
+    }
+  })
+  const componentData = page[0].properties.de.content
+  const targeInstances = componentData['target-instance']
+
+  return {
+    'active': componentData['sync-active'],
+    'targetInstance': targeInstances[0]
+  }
 }
 
 module.exports = async function copyPageData(pageId, sourceInstanceName) {
@@ -13,7 +24,7 @@ module.exports = async function copyPageData(pageId, sourceInstanceName) {
       throw new Error('Original Page does not exist')
     }
 
-    const targetInstance = await getTargetInstance(pageData)
+    const { active, targetInstance } = await getComponentConfig(pageData)
 
     // getPage on Target instance
     const targetPage = await makaira_api.getPageData(pageId, targetInstance)
@@ -49,3 +60,5 @@ module.exports = async function copyPageData(pageId, sourceInstanceName) {
 
   return ret
 }
+
+
