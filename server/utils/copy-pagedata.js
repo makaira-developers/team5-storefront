@@ -1,13 +1,19 @@
 const user = 'admin'
 const pass = 'bxzstbxirejqysjs'
-const configInstance1 = {
+const auth = {
   auth: {
     username: user,
     password: pass,
   },
 }
-const configInstance2 = {
-  ...configInstance1,
+const sourceInstance = {
+  ...auth,
+  headers: {
+    'X-Makaira-Instance': 'hackathon',
+  },
+}
+const targetInstance = {
+  ...auth,
   headers: {
     'X-Makaira-Instance': 'hackathon_stage',
   },
@@ -15,28 +21,68 @@ const configInstance2 = {
 
 const axios = require('axios')
 
-async function getDataFromMakaira(pageid) {
+async function getPageData(pageid, config) {
   const url = 'https://team5.makaira.io/landingpage/' + pageid
-  return await axios.get(url, configInstance1)
+  let ret = null
+  try {
+    const response = await axios.get(url, config)
+    ret = response.data
+  } catch (e) {
+    ret = null
+  }
+  return ret
 }
-async function putDataintoMakaira(pageData) {
-  //const pageData = response.data
-  pageData.id = 14
-  pageData.seoUrls = { de: '/test2' }
-  pageData.revisionParent = ''
-  pageData.name = 'asdasd'
+async function createPage(pageData, config) {
+  const url = 'https://team5.makaira.io/landingpage/'
+  let ret = null
+  try {
+    const response = await axios.post(url, pageData, config)
+    ret = response.data
+  } catch (e) {
+    ret = null
+  }
+  return ret
+}
+async function updatePage(pageData, config) {
   const url = 'https://team5.makaira.io/landingpage/' + pageData.id
-
-  return await axios.put(url, pageData, configInstance2)
+  let ret = null
+  try {
+    const response = await axios.put(url, pageData, config)
+    ret = response.data
+  } catch (e) {
+    ret = null
+  }
+  return ret
 }
 
 module.exports = async function copyPageData(pageId) {
-  const pageData = await getDataFromMakaira(pageId)
-  //console.log(data)
-  const res = await putDataintoMakaira(pageData)
-  console.log(res)
-
-  return {
-    status: 'ok',
+  let ret = {}
+  try {
+    // Get original Page:
+    const pageData = await getPageData(pageId, sourceInstance)
+    if (pageData == null) {
+      throw new Error('Original Page does not exist')
+    }
+    // getPage on Target instance
+    const targetPage = await getPageData(pageId, targetInstance)
+    if (targetPage == null) {
+      // Page does not exist:
+      createPage(pageData, targetInstance)
+    } else {
+      updatePage(pageData, targetInstance)
+    }
+    ret = {
+      status: 'ok',
+    }
+  } catch (e) {
+    ret = {
+      status: 'error',
+    }
   }
+
+  //console.log(data)
+  //const res = await putDataintoMakaira(pageData, configInstance2)
+  //console.log(res)
+
+  return ret
 }
