@@ -93,7 +93,7 @@ module.exports = async function copyPageData(pageId) {
     }
     // getPage on Target instance
     const targetPage = await getPageData(pageId, targetInstance)
-    console.log('Targetpage' + targetPage)
+    //console.log('Targetpage' + targetPage)
     if (targetPage == null) {
       // Page does not exist:
       createPage(pageData, targetInstance)
