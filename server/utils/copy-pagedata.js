@@ -5,6 +5,7 @@ const auth = {
     username: user,
     password: pass,
   },
+  timeout: 5000,
 }
 const sourceInstance = {
   ...auth,
