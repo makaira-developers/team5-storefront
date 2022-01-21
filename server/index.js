@@ -53,6 +53,54 @@ app
       app.render(req, res, '/library/entry', req.query)
     })
 
+    server.get('/makaira-copy', (req, res) => {
+      /*
+      postData = {
+        "customer": "5",
+        "instance": "hackathon",
+        "type": "landingpage",
+        "id": ["3"],
+        "action": "update"
+      }
+
+       */
+
+      const user = 'admin'
+      const pass = 'bxzstbxirejqysjs'
+      const config = {
+        auth: {
+          username: user,
+          password: pass,
+        },
+      }
+
+      const axios = require('axios')
+      const url = 'https://team5.makaira.io/landingpage/3'
+
+      axios.get(url, config).then(function (response) {
+        const pageData = response.data
+        pageData.id = 14
+        pageData.seoUrls = { de: '/test2' }
+        pageData.revisionParent = ''
+        pageData.name = 'asdasd'
+        const url = 'https://team5.makaira.io/landingpage/' + pageData.id
+        axios
+          .put(url, pageData, config)
+          .then(function (response2) {
+            console.log(response2.data)
+          })
+          .catch(function (error) {
+            console.log(error)
+          })
+        // handle success
+      })
+
+      const e = {
+        status: 'ok',
+      }
+      return res.status(200).json(e)
+    })
+
     /**
      * Generate search routes for each language
      */
