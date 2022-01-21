@@ -56,6 +56,7 @@ app
 
     server.post('/makaira-copy', async (req, res) => {
       const postData = req.body
+      console.log(postData)
       /*
       postData = {
         "customer": "5",
