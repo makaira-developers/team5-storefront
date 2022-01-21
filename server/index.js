@@ -66,9 +66,14 @@ app
         "action": "update"
       }
       */
-      let pageId = postData['ids'][0]
-      const e = await copyPageData(pageId)
-      return res.status(200).json(e)
+      try {
+        let pageId = postData['ids'][0]
+        let sourceInstance = postData['instance']
+        const e = await copyPageData(pageId, sourceInstance)
+        return res.status(200).json(e)
+      } catch (e) {
+        return res.status(400).json(e)
+      }
     })
 
     /**

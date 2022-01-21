@@ -7,20 +7,17 @@ const auth = {
   },
   timeout: 5000,
 }
-const sourceInstance = {
-  ...auth,
-  headers: {
-    'X-Makaira-Instance': 'hackathon',
-  },
-}
-const targetInstance = {
-  ...auth,
-  headers: {
-    'X-Makaira-Instance': 'hackathon_stage',
-  },
-}
 
 const axios = require('axios')
+
+async function getInstanceConfig(instance) {
+  return {
+    ...auth,
+    headers: {
+      'X-Makaira-Instance': instance,
+    },
+  }
+}
 
 async function getPageData(pageid, config) {
   const url = 'https://team5.makaira.io/landingpage/' + pageid
@@ -60,6 +57,10 @@ async function updatePage(pageData, config) {
   return ret
 }
 
+async function getTargetInstance(pageData) {
+  console.log(pageData)
+}
+
 async function addNotification(
   config,
   message = 'error happened',
@@ -84,14 +85,17 @@ async function addNotification(
   return ret
 }
 
-module.exports = async function copyPageData(pageId) {
+module.exports = async function copyPageData(pageId, sourceInstance) {
   let ret = {}
   try {
     // Get original Page:
-    const pageData = await getPageData(pageId, sourceInstance)
+    const pageData = await getPageData(pageId, getInstanceConfig(sourceInstance))
     if (pageData == null) {
       throw new Error('Original Page does not exist')
     }
+
+    const targetInstance = await getTargetInstance(pageData)
+
     // getPage on Target instance
     const targetPage = await getPageData(pageId, targetInstance)
     //console.log('Targetpage' + targetPage)
