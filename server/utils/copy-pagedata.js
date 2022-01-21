@@ -7,11 +7,11 @@ async function getComponentConfig(pageData) {
     }
   })
   const componentData = page[0].properties.de.content
-  const targeInstances = componentData['target-instance']
+  const targetInstance = componentData['target-instance']
 
   return {
-    'active': componentData['sync-active'],
-    'targetInstance': targeInstances[0]
+    active: componentData['sync-active'],
+    targetInstance: targetInstance,
   }
 }
 
@@ -24,18 +24,29 @@ module.exports = async function copyPageData(pageId, sourceInstanceName) {
       throw new Error('Original Page does not exist.')
     }
 
-    const { active, targetInstance } = await getComponentConfig(pageData)
+    const { active, targetInstance: targetInstanceName } =
+      await getComponentConfig(pageData)
 
-    if (!active || !targetInstance) { throw  new Error('Either it is not active or target instance is not found.')}
+    if (!active || !targetInstanceName) {
+      throw new Error(
+        'Either it is not active or target instance is not found.'
+      )
+    }
+
+    if (targetInstanceName === sourceInstanceName) {
+      return {
+        status: 'nothing to do, source equals target',
+      }
+    }
 
     // getPage on Target instance
-    const targetPage = await makaira_api.getPageData(pageId, targetInstance)
+    const targetPage = await makaira_api.getPageData(pageId, targetInstanceName)
     //console.log('Targetpage' + targetPage)
     if (targetPage == null) {
       // Page does not exist:
-      makaira_api.createPage(pageData, targetInstance)
+      makaira_api.createPage(pageData, targetInstanceName)
     } else {
-      makaira_api.updatePage(pageData, targetInstance)
+      makaira_api.updatePage(pageData, targetInstanceName)
     }
     makaira_api.addNotification(
       sourceInstanceName,
@@ -62,5 +73,3 @@ module.exports = async function copyPageData(pageId, sourceInstanceName) {
 
   return ret
 }
-
-
