@@ -8,6 +8,7 @@ const bodyParser = require('body-parser')
 const sendSendGridEmail = require('../utils/core/sendSendGridEmail')
 
 const logError = require('./utils/logError')
+const copyPageData = require('./utils/copy-pagedata')
 
 const dev = process.env.NODE_ENV !== 'production'
 const port = process.env.PORT || process.env.NODE_PORT || 5000
@@ -53,7 +54,8 @@ app
       app.render(req, res, '/library/entry', req.query)
     })
 
-    server.get('/makaira-copy', (req, res) => {
+    server.post('/makaira-copy', async (req, res) => {
+      const postData = req.body
       /*
       postData = {
         "customer": "5",
@@ -62,42 +64,9 @@ app
         "id": ["3"],
         "action": "update"
       }
-
-       */
-
-      const user = 'admin'
-      const pass = 'bxzstbxirejqysjs'
-      const config = {
-        auth: {
-          username: user,
-          password: pass,
-        },
-      }
-
-      const axios = require('axios')
-      const url = 'https://team5.makaira.io/landingpage/3'
-
-      axios.get(url, config).then(function (response) {
-        const pageData = response.data
-        pageData.id = 14
-        pageData.seoUrls = { de: '/test2' }
-        pageData.revisionParent = ''
-        pageData.name = 'asdasd'
-        const url = 'https://team5.makaira.io/landingpage/' + pageData.id
-        axios
-          .put(url, pageData, config)
-          .then(function (response2) {
-            console.log(response2.data)
-          })
-          .catch(function (error) {
-            console.log(error)
-          })
-        // handle success
-      })
-
-      const e = {
-        status: 'ok',
-      }
+      */
+      let pageId = postData['id'][0]
+      const e = await copyPageData(pageId)
       return res.status(200).json(e)
     })
 
